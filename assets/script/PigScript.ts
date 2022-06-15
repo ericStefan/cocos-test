@@ -55,10 +55,15 @@ export default class NewClass extends cc.Component {
             }else if(e.keyCode == cc.macro.KEY.space){
                 this.direction = cc.v2(0,0);
             }
+
+            if(!this.controlable){
+                this.direction = null;
+            }
             console.log(this.direction);  
     }
 
     update (dt) {
+        
         if(this.direction == null) return; //原地不动
 
         let pos:cc.Vec2 = this.node.getPosition();

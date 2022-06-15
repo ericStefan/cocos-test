@@ -499,7 +499,7 @@
     "label": null,
     "text": "hello",
     "speed": 10,
-    "controlable": true,
+    "controlable": false,
     "_id": "3cGLHzrsRMGIiW8MSSmZfp"
   },
   {
