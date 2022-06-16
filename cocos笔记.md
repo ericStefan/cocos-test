@@ -81,6 +81,14 @@ let label:cc.Label = target.getComponent(cc.Label)
 let script = node.getComponent("Script");
 ```
 
+获取节点上指定类型的所有组件
+
+```
+let label:cc.Label = target.getComponents(cc.Label)
+```
+
+
+
 ### 坐标系
 
 cocos creator使用的都是相对坐标，是相对于父节点锚点的坐标
@@ -206,3 +214,159 @@ update(dt){
 ```
 
 ### 计时器
+
+开始一个计时器
+
+```javascript
+component.schedule(fucntion(){},interval,repeat,delay)
+```
+
+`interval` ：计时器的间隔时间(s)
+
+`repeat`: 重复次数（默认是一直重复）
+
+`delay`: 延迟多少（s）时间后开始执行
+
+计时器相关函数：
+
+- `schedule`：开始一个计时器
+- `scheduleOnce`：开始一个只执行一次的计时器
+- `unschedule`：取消一个计时器
+- `unscheduleAllCallbacks`：取消这个组件的所有计时器
+
+### GIF图片展示
+
+cocos creator不支持直接使用GIF, 有以下方式进行处理：
+
+1、循环显示每一帧图片
+
+GIF是由多张图片组成，并循环显示得到的。
+
+先将GIF文件提取出每一帧的图片，加入cocos的资源管理器中，将每一帧图片的Trim Type设置为none。
+
+```typescript
+//GIFplayer.ts
+export default class NewClass extends cc.Component {
+
+    @property(cc.Label)
+    label: cc.Label = null;
+
+    @property
+    text: string = 'hello';
+	
+    //设置frame配置项，用来存储每一帧的图片
+    @property([cc.SpriteFrame])
+    frames: cc.SpriteFrame[] = [];
+
+    sprite:cc.Sprite = null;  //Sprite组件
+    index:number = 0;   //当前显示的第N张图片
+    interval:number = 0.1;  //定时器的间隔
+    // LIFE-CYCLE CALLBACKS:
+
+    onLoad () {
+        this.sprite = this.getComponent(cc.Sprite);
+    }
+
+    start () {
+        this.schedule(this.onTimer,this.interval);
+    }
+
+    onTimer(){
+        if(this.frames.length == 0) return;
+        this.sprite.spriteFrame = this.frames[this.index];
+
+        // 下一帧
+        this.index++;
+        if(this.index >=this.frames.length){
+            this.index = 0;
+        }
+    }
+    // update (dt) {}
+    onDestory(){
+        this.unschedule(this.onTimer);
+    }
+}
+```
+
+在编辑器上的`GIFplayer`组件上依次添加每一帧的图片
+
+![image-20220616114026616](C:\Users\eric\AppData\Roaming\Typora\typora-user-images\image-20220616114026616.png)
+
+2、使用Atlas图集
+
+原理与第一种方法类似，Atlas图集是把每一帧的图片集合在一起形成一个图集（与css的雪碧图类似）。
+
+
+
+```
+    //设置atlas配置项，用来存储每一帧的图片
+	@property(cc.SpriteAtlas)
+	atlas:cc.SpriteAtlas = null;
+```
+
+### 资源加载
+
+#### 动态加载资源
+
+在编辑器中直接引入的资源是静态引入的，还可以使用函数调用的方式动态引入资源。
+
+* 所有需要通过脚本动态加载的资源，都必须放置在 `resources` 文件夹或它的子文件夹下。
+
+* 使用`cc.resources.load` 等接口动态加载资源时，要传入相对 resources 的路径，并且路径的结尾处 **不能** 包含文件扩展名
+
+```
+cc.resources.load(path,type,onComplete)
+```
+
+`path` : 相对路径（文件名不加后缀）
+
+`type`: 加载资源的类型,可省略(`cc.SpriteFrame`,` cc.AudioClip`等)
+
+`onComplete`: 指定回调方法，资源加载完成时调用
+
+```typescript
+function(err,assets){}
+```
+
+若err==null，表示资源加载成功，assets表示加载得到的资源对象
+
+若err!=null，表示资源加载出错，err即为出错的原因
+
+#### 多个资源的加载
+
+1、传入多个资源路径组成的数组
+
+```
+cc.resources.load(paths,()=>{})
+```
+
+2、使用`loadDir`加载该目录下的所有资源
+
+```
+cc.resources.loadDir(path,()=>{})
+```
+
+### 事件
+
+#### 触摸事件
+
+`touchstart`
+
+`touchmove`
+
+`touchend`
+
+`touchcancel`
+
+冒泡机制(触摸事件)
+
+对子节点的事件行为也会逐级触发父节点的事件行为。
+
+```
+//使用stopPropagation()阻止冒泡
+//e是对应的事件对象
+show(e:cc.Event.EventTouch){
+	e.stopPropagation();
+}
+```
+

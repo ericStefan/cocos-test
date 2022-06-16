@@ -31,7 +31,7 @@ export default class NewClass extends cc.Component {
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        this.node.on("mousedown",this.moveLeft,this);
+        // this.node.on("mousedown",this.moveLeft,this);
         cc.systemEvent.on('keydown',this.onKeyPress,this)
     }
 
@@ -39,9 +39,9 @@ export default class NewClass extends cc.Component {
         cc.log("你好，我是佩奇！"+123)
     }
 
-    moveLeft(){
-        this.node.x -= 100;
-    }
+    // moveLeft(){
+    //     this.node.x -= 100;
+    // }
     
     onKeyPress(e:cc.Event.EventKeyboard){
             if(e.keyCode == cc.macro.KEY.left){
