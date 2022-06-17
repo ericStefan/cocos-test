@@ -19,18 +19,16 @@ export default class NewClass extends cc.Component {
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        this.node.on("touchstart",this.endGame,this)
-        cc.log(this)
+        this.node.on("touchstart",this.gameout,this);
     }
 
     start () {
 
     }
 
-    endGame(){
-        let motai:cc.Node = cc.find("Canvas/模态框")
-        cc.log(motai);
-        motai.active = true;
+    gameout(){
+        this.node.parent.active = false;
     }
+
     // update (dt) {}
 }
